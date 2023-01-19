@@ -3,6 +3,10 @@
 
 package util
 
+import (
+	"github.com/Computroniks/asset-tags/store"
+)
+
 // Runtime config
 var (
 	BindAddr string
@@ -12,6 +16,7 @@ var (
 	DatabaseName string
 	TagLength int
 	BasePath string
+	DB store.Store
 )
 
 // Environment variables

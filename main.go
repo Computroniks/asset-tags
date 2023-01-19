@@ -7,8 +7,10 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/Computroniks/asset-tags/handler"
 	"github.com/Computroniks/asset-tags/router"
 	"github.com/Computroniks/asset-tags/store/mysql"
+	"github.com/Computroniks/asset-tags/templates"
 	"github.com/Computroniks/asset-tags/util"
 )
 
@@ -19,6 +21,7 @@ func init() {
 	util.DatabaseUsr = util.Mustgetenv(util.DatabaseUsrEnv)
 	util.DatabasePwd = util.Mustgetenv(util.DatabasePwdEnv)
 	util.DatabaseName = util.Mustgetenv(util.DatabaseNameEnv)
+	util.BasePath = util.Getenv(util.BasePathEnv, util.DefaultBasePath)
 
 	var err error
 	util.TagLength, err = strconv.Atoi(
@@ -33,10 +36,14 @@ func init() {
 		log.Println("Using default tag length of", util.DefaultTagLength)
 		util.TagLength = util.DefaultTagLength
 	}
+
+	log.Println("Initialising templates")
+	templates.Init()
 }
 
 func main() {
-	db, err := mysql.New(
+	var err error
+	util.DB, err = mysql.New(
 		util.DatabaseAddr,
 		util.DatabaseUsr,
 		util.DatabasePwd,
@@ -44,10 +51,16 @@ func main() {
 	)
 
 	if err != nil {
-		log.Fatalln(err)
-		
+		log.Fatalln(err)	
 	}
 
-	router.RegisterHandlers(db)
-	router.Start(util.BindAddr)
+	defer util.DB.Close()
+
+	app := router.New(util.BasePath)
+	app.GET("/", handler.Index)
+	app.GET("/api/tag", handler.GetTag)
+	app.POST("/api/tag", handler.IncrementTag)
+	app.GET("/api/prefix", handler.GetPrefixes)
+	app.POST("/api/prefix", handler.AddPrefix)
+	app.Start(util.BindAddr)
 }
