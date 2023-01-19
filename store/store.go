@@ -8,4 +8,5 @@ type Store interface {
 	GetPrefixes() ([]string, error)
 	IncrementTag(prefix string) error
 	AddPrefix(prefix string) error
+	Close()
 }

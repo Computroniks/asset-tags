@@ -104,3 +104,8 @@ func (o *MySQLDB) AddPrefix(prefix string) error {
 	// Error should already be nil so no need to verify
 	return err
 }
+
+// Close connection to database
+func (o *MySQLDB) Close() {
+	o.conn.Close()
+}
