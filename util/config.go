@@ -11,6 +11,7 @@ var (
 	DatabasePwd string
 	DatabaseName string
 	TagLength int
+	BasePath string
 )
 
 // Environment variables
@@ -21,10 +22,12 @@ const (
 	DatabasePwdEnv = "DB_PASSWORD"
 	DatabaseNameEnv = "DB_NAME"
 	TagLengthEnv = "TAG_LENGTH"
+	BasePathEnv = "BASE_PATH"
 )
 
 // Defaults
 const (
 	DefaultBindAddr = ":3000"
 	DefaultTagLength = 6
+	DefaultBasePath = "/"
 )

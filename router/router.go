@@ -12,7 +12,7 @@ import (
 )
 
 type Router struct {
-	routes map[string]map[string]func(http.ResponseWriter, *http.Request)
+	routes map[string]map[string]func(http.ResponseWriter, *http.Request)int
 	errors map[int]func(http.ResponseWriter, *http.Request)
 	basePath string
 }
@@ -21,22 +21,22 @@ type Router struct {
 func New(basePath string) *Router {
 	rtr := Router{
 		basePath: basePath,
-		routes: make(map[string]map[string]func(http.ResponseWriter, *http.Request)),
+		routes: make(map[string]map[string]func(http.ResponseWriter, *http.Request)int),
 		errors: make(map[int]func(http.ResponseWriter, *http.Request)),
 	}
 	return &rtr
 }
 
 // Add GET handler
-func (o *Router) GET(path string, handler func(http.ResponseWriter, *http.Request)) {
+func (o *Router) GET(path string, handler func(http.ResponseWriter, *http.Request)int) {
 	if _, exists := o.routes[path]; !exists {
-		o.routes[path] = make(map[string]func(http.ResponseWriter, *http.Request))
+		o.routes[path] = make(map[string]func(http.ResponseWriter, *http.Request)int)
 	}
 	o.routes[path]["GET"] = handler
 }
 
 // Add POST handler
-func (o *Router) POST(path string, handler func(http.ResponseWriter, *http.Request)) {
+func (o *Router) POST(path string, handler func(http.ResponseWriter, *http.Request)int) {
 	o.routes[path]["POST"] = handler
 }
 
@@ -61,9 +61,14 @@ func (o *Router) sendError(w http.ResponseWriter, req *http.Request, status int)
 
 // Route the users request to the correct handler
 func (o *Router) routeRequest(w http.ResponseWriter, req *http.Request) {
+	URL := req.URL
+	method := req.Method
+	remoteAddr := req.RemoteAddr
+
 	handler, exists := o.routes[req.URL.Path][req.Method]
 	if exists {
-		handler(w, req)
+		status := handler(w, req)
+		log.Println(method, URL, remoteAddr, status)
 	} else {
 		if _, exists := o.routes[req.URL.Path]; exists {
 			o.sendError(w, req, http.StatusMethodNotAllowed)
