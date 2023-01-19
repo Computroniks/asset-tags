@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2023 Matthew Nickson <mnickson@sidingsmedia.com>
+# SPDX-License-Identifier: CC0-1.0
+
+name: DCO
+on: 
+ - push
+ - pull_request
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Check DCO
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip3 install -U dco-check
+          dco-check
