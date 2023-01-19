@@ -1,11 +1,18 @@
 <!-- 
 SPDX-FileCopyrightText: 2022 Sidings Media <contact@sidingsmedia.com>
+SPDX-FileCopyrightText: 2023 Matthew Nickson <mnickson@sidingsmedia.com>
 SPDX-License-Identifier: MIT
 -->
 
-# Project name
+# Asset Tags
 
-A description of what this project is and what it does
+Asset Tags are used everywhere. They are vital to keeping track of
+equipment within an organization. Often, we use tags that have specific
+meanings encoded into them, for example one prefix for networking
+equipment, another for user devices. It can be hard to keep track of
+where we are up to. Asset Tags is a simple go application designed to
+run in a container to help you to make sure that you never again suffer
+the pain of assets with duplicate tags.
 
 ## Licence
 This repo uses the [REUSE](https://reuse.software) standard in order to
