@@ -92,7 +92,7 @@ func (o *MySQLDB) IncrementTag(prefix string) error {
 
 	count ++
 
-	_, err = o.conn.Exec("UPDATE prefix SET count=? WHERE prefix=?", count, prefix)
+	_, err = o.conn.Exec("UPDATE prefixes SET count=? WHERE prefix=?", count, prefix)
 
 	// Error should already be nil so no need to verify
 	return err
