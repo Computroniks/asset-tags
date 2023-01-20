@@ -110,13 +110,13 @@ SPDX-License-Identifier: MIT
             function getCurrentPrefix() {
                 let params = (new URL(document.location)).searchParams
                 let prefix = params.get("prefix")
-                if (prefix === undefined) {
-                    fetch("/api/prefix")
+                if (prefix === undefined || prefix === null) {
+                    return fetch("/api/prefix")
                         .then((res) => res.json())
-                        .then((data) => {prefix = data.prefixes[0]})
+                        .then((data) => {return data.prefixes[0]})
+                } else {
+                    return new Promise((res) => {res(prefix)})
                 }
-
-                return prefix
             }
 
             function selectPrefix() {
@@ -125,8 +125,10 @@ SPDX-License-Identifier: MIT
             }
 
             function take() {
-                fetch(`/api/tag?prefix=${getCurrentPrefix()}`, {method: "POST"}).then(() => {
+                getCurrentPrefix().then((prefix) => {
+                    fetch(`/api/tag?prefix=${getCurrentPrefix()}`, {method: "POST"}).then(() => {
                     location.reload()
+                })
                 })
             }
         </script>

@@ -19,28 +19,33 @@ type templateData struct {
 
 func Index(w http.ResponseWriter, req *http.Request) int {
 	prefix := req.URL.Query().Get("prefix")
-	var tag string
-	var prefixes []string
-	if prefix == "" {
-		// TODO: Get first tag
-	} else {
-		var err error
-		tag, err = util.DB.GetTag(prefix)
-		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("500"))
-			return http.StatusInternalServerError
-		}
 
-		prefixes, err = util.DB.GetPrefixes()
-		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("500"))
-			return http.StatusInternalServerError
-		}
+	prefixes, err := util.DB.GetPrefixes()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500"))
+		return http.StatusInternalServerError
 	}
+
+	if prefix == "" {
+		if len(prefixes) == 0 {
+			http.Redirect(w, req, "/settings", http.StatusSeeOther)
+			return http.StatusSeeOther
+		}
+		prefix = prefixes[0]
+	} 
+
+	var tag string
+	tag, err = util.DB.GetTag(prefix)
+
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500"))
+		return http.StatusInternalServerError
+	}
+	
 	templates.Templates["index"].Execute(w, templateData{Current: tag, Prefixes: prefixes, CurrentPrefix: prefix})
 	return http.StatusOK
 }
