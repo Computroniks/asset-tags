@@ -98,7 +98,7 @@ SPDX-License-Identifier: MIT
 
   <body>
     <article>
-      <h1>Generate asset tag</h1>
+      <h1>Add prefix</h1>
       <div>
         <input type="text" id="prefix-name" placeholder="Prefix"/>
         <button onclick="add()">Add</button>
@@ -106,7 +106,7 @@ SPDX-License-Identifier: MIT
         <h3>Current prefixes:</h3>
         <ul>
             {{range .Prefixes}}
-            <li>{{.}}</li>
+            <li><a href="/?prefix={{.}}">{{.}}</a></li>
             {{end}}
         </ul>
       </div>
@@ -121,6 +121,7 @@ SPDX-License-Identifier: MIT
             if (res.status == 500) {
                 alert("Failed to add prefix. Possible duplicate?")
             } else {
+                document.getElementById("prefix-name").value = ""
                 location.reload();
             }
           });
