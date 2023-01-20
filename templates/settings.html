@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
       name="viewport"
       content="width=device-width, height=device-height, initial-scale=1.0"
     />
-    <title>Generate Asset Tag</title>
+    <title>Settings</title>
     <style>
       html {
         width: 100%;
@@ -48,7 +48,7 @@ SPDX-License-Identifier: MIT
         color: var(--accent);
         text-decoration: none;
       }
-      button {
+      button, input {
         cursor: pointer;
         outline: 0;
         display: inline-block;
@@ -64,6 +64,9 @@ SPDX-License-Identifier: MIT
           border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         color: var(--primary);
         border-color: var(--primary);
+      }
+      input {
+        cursor: auto;
       }
       button:hover {
         color: var(--bg-color);
@@ -97,49 +100,30 @@ SPDX-License-Identifier: MIT
     <article>
       <h1>Generate asset tag</h1>
       <div>
-        <label for="prefix-select">Using prefix:</label>
-        <select onchange="selectPrefix()" id="prefix-select">
-          {{range .Prefixes}} {{if eq $.CurrentPrefix .}}
-          <option value="{{.}}" selected="selected">{{.}}</option>
-          {{else}}
-          <option value="{{.}}">{{.}}</option>
-          {{end}} {{end}}
-        </select>
-        <p>The next free asset tag is: <strong>{{.Current}}</strong></p>
-        <button onclick="take()">Assign</button>
+        <input type="text" id="prefix-name" placeholder="Prefix"/>
+        <button onclick="add()">Add</button>
+
+        <h3>Current prefixes:</h3>
+        <ul>
+            {{range .Prefixes}}
+            <li>{{.}}</li>
+            {{end}}
+        </ul>
       </div>
     </article>
 
     <script>
-      function getCurrentPrefix() {
-        let params = new URL(document.location).searchParams;
-        let prefix = params.get("prefix");
-        if (prefix === undefined || prefix === null) {
-          return fetch("/api/prefix")
-            .then((res) => res.json())
-            .then((data) => {
-              return data.prefixes[0];
-            });
-        } else {
-          return new Promise((res) => {
-            res(prefix);
-          });
-        }
-      }
-
-      function selectPrefix() {
-        let select = document.getElementById("prefix-select").value;
-        location.href = `/?prefix=${select}`;
-      }
-
-      function take() {
-        getCurrentPrefix().then((prefix) => {
-          fetch(`/api/tag?prefix=${prefix}`, {
+      function add() {
+        let prefix = document.getElementById("prefix-name").value
+        fetch(`/api/prefix?prefix=${prefix}`, {
             method: "POST",
-          }).then(() => {
-            location.reload();
+          }).then((res) => {
+            if (res.status == 500) {
+                alert("Failed to add prefix. Possible duplicate?")
+            } else {
+                location.reload();
+            }
           });
-        });
       }
     </script>
   </body>

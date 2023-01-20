@@ -58,6 +58,7 @@ func main() {
 
 	app := router.New(util.BasePath)
 	app.GET("/", handler.Index)
+	app.GET("/settings", handler.Settings)
 	app.GET("/api/tag", handler.GetTag)
 	app.POST("/api/tag", handler.IncrementTag)
 	app.GET("/api/prefix", handler.GetPrefixes)

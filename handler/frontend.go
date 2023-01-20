@@ -52,3 +52,14 @@ func Index(w http.ResponseWriter, req *http.Request) (int, error) {
 	templates.Templates["index"].Execute(w, templateData{Current: tag, Prefixes: prefixes, CurrentPrefix: prefix})
 	return http.StatusOK, nil
 }
+
+func Settings(w http.ResponseWriter, req *http.Request) (int, error) {
+	prefixes, err := util.DB.GetPrefixes()
+
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	templates.Templates["settings"].Execute(w, templateData{Prefixes: prefixes})
+	return http.StatusOK, nil
+}
