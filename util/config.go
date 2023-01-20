@@ -5,6 +5,7 @@ package util
 
 import (
 	"github.com/Computroniks/asset-tags/store"
+	"github.com/Computroniks/asset-tags/templates"
 )
 
 // Runtime config
@@ -18,6 +19,7 @@ var (
 	TagLength int
 	BasePath string
 	DB store.Store
+	Views templates.Template
 )
 
 // Environment variables

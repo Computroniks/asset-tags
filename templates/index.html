@@ -3,160 +3,13 @@ SPDX-FileCopyrightText: 2023 Matthew Nickson <mnickson@sidingsmedia.com>
 SPDX-License-Identifier: MIT
 -->
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta
-      name="viewport"
-      content="width=device-width, height=device-height, initial-scale=1.0"
-    />
-    <title>Generate Asset Tag</title>
-    <style>
-      html {
-        width: 100%;
-        height: 100%;
-      }
-      body {
-        text-align: center;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: space-around;
-        align-items: center;
-        font-family: var(--font);
-        font-size: 20px;
-        overflow: hidden;
-      }
-      h1 {
-        font-size: 50px;
-        margin-top: 0;
-      }
-      article {
-        display: block;
-        text-align: left;
-        width: 95%;
-        max-width: 650px;
-        margin: 0 auto;
-      }
-      a {
-        color: var(--primary);
-        text-decoration: none;
-      }
-      a:hover {
-        color: var(--accent);
-        text-decoration: none;
-      }
-      button {
-        cursor: pointer;
-        outline: 0;
-        display: inline-block;
-        font-weight: 400;
-        line-height: 1.5;
-        width: 80px;
-        height: 40px;
-        text-align: center;
-        background-color: transparent;
-        border: 1px solid transparent;
-        padding: 6px 12px;
-        font-size: 1rem;
-        border-radius: 0.25rem;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        color: var(--primary);
-        border-color: var(--primary);
-      }
-      button:hover,
-      .button-clicked {
-        color: var(--bg-color);
-        background-color: var(--primary);
-        border-color: var(--primary);
-      }
-      .button-clicked {
-        padding: 0px;
-      }
-      footer {
-        color: #444;
-        font-size: 14px;
-      }
-      select {
-        background: var(--bg-color);
-        color: var(--text-color);
-        border: 0px solid transparent;
-        text-decoration: none;
-        font: inherit;
-      }
-      :root {
-        --primary: #1685fc;
-        --secondary: #6c757d;
-        --text-color: #000;
-        --bg-color: #fff;
-        --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-          Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji",
-          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-      }
+{{template "base.html" .}}
 
-      /* Spinner from https://loading.io/css/ released under CC0-1.0*/
-      .lds-ellipsis {
-        display: inline-block;
-        position: relative;
-        width: 100%;
-        height: 100%;
-      }
-      .lds-ellipsis div {
-        position: absolute;
-        top: 15px;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: var(--bg-color);
-        animation-timing-function: cubic-bezier(0, 1, 1, 0);
-      }
-      .lds-ellipsis div:nth-child(1) {
-        left: 8px;
-        animation: lds-ellipsis1 0.6s infinite;
-      }
-      .lds-ellipsis div:nth-child(2) {
-        left: 8px;
-        animation: lds-ellipsis2 0.6s infinite;
-      }
-      .lds-ellipsis div:nth-child(3) {
-        left: 32px;
-        animation: lds-ellipsis2 0.6s infinite;
-      }
-      .lds-ellipsis div:nth-child(4) {
-        left: 56px;
-        animation: lds-ellipsis3 0.6s infinite;
-      }
-      @keyframes lds-ellipsis1 {
-        0% {
-          transform: scale(0);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      @keyframes lds-ellipsis3 {
-        0% {
-          transform: scale(1);
-        }
-        100% {
-          transform: scale(0);
-        }
-      }
-      @keyframes lds-ellipsis2 {
-        0% {
-          transform: translate(0, 0);
-        }
-        100% {
-          transform: translate(24px, 0);
-        }
-      }
-    </style>
-  </head>
+{{define "title"}}
+Generate asset tag
+{{end}}
 
-  <body>
+{{define "body"}}
     <article>
       <h1>Generate asset tag</h1>
       <div>
@@ -208,5 +61,4 @@ SPDX-License-Identifier: MIT
         });
       }
     </script>
-  </body>
-</html>
+{{end}}

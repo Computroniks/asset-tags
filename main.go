@@ -39,7 +39,7 @@ func init() {
 	}
 
 	log.Println("Initialising templates")
-	templates.Init()
+	util.Views = *templates.New()
 }
 
 func main() {

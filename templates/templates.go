@@ -6,19 +6,25 @@ package templates
 import (
 	"embed"
 	"html/template"
+	"io"
 )
 
-//go:embed *
+//go:embed *.html
 var templateFiles embed.FS
 
+type Template struct {
+    templates *template.Template
+}
 
-var Templates map[string]*template.Template
+func New() *Template {
+    templates := template.Must(template.New("").ParseFS(templateFiles, "*.html"))
+    return &Template{
+        templates: templates,
+    }
+}
 
-func Init() {
-	Templates = make(map[string]*template.Template)
-	Templates["index"] = template.Must(template.ParseFS(templateFiles, "index.html"))
-	Templates["settings"] = template.Must(template.ParseFS(templateFiles, "settings.html"))
-	Templates["400"] = template.Must(template.ParseFS(templateFiles, "400.html"))
-	Templates["404"] = template.Must(template.ParseFS(templateFiles, "404.html"))
-	Templates["500"] = template.Must(template.ParseFS(templateFiles, "500.html"))
+func (t *Template) Render(w io.Writer, name string, data interface{}) error {
+    tmpl := template.Must(t.templates.Clone())
+    tmpl = template.Must(tmpl.ParseFS(templateFiles, name))
+    return tmpl.ExecuteTemplate(w, name, data)
 }

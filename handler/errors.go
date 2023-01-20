@@ -6,20 +6,20 @@ package handler
 import (
 	"net/http"
 
-	"github.com/Computroniks/asset-tags/templates"
+	"github.com/Computroniks/asset-tags/util"
 )
 
 func HTTP400(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusBadRequest)
-	templates.Templates["400"].Execute(w, nil)
+	util.Views.Render(w, "400.html", nil)
 }
 
 func HTTP404(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	templates.Templates["404"].Execute(w, nil)
+	util.Views.Render(w, "404.html", nil)
 }
 
 func HTTP500(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusInternalServerError)
-	templates.Templates["500"].Execute(w, nil)
+	util.Views.Render(w, "500.html", nil)
 }

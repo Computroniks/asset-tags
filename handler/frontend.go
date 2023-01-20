@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/Computroniks/asset-tags/templates"
 	"github.com/Computroniks/asset-tags/util"
 )
 
@@ -49,7 +48,7 @@ func Index(w http.ResponseWriter, req *http.Request) (int, error) {
 		return http.StatusInternalServerError, err
 	}
 
-	templates.Templates["index"].Execute(w, templateData{Current: tag, Prefixes: prefixes, CurrentPrefix: prefix})
+	util.Views.Render(w, "index.html", templateData{Current: tag, Prefixes: prefixes, CurrentPrefix: prefix})
 	return http.StatusOK, nil
 }
 
@@ -60,6 +59,6 @@ func Settings(w http.ResponseWriter, req *http.Request) (int, error) {
 		return http.StatusInternalServerError, err
 	}
 
-	templates.Templates["settings"].Execute(w, templateData{Prefixes: prefixes})
+	util.Views.Render(w, "settings.html", templateData{Prefixes: prefixes})
 	return http.StatusOK, nil
 }
