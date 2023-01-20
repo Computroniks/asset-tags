@@ -12,7 +12,7 @@ import (
 )
 
 type Router struct {
-	routes map[string]map[string]func(http.ResponseWriter, *http.Request)int
+	routes map[string]map[string]func(http.ResponseWriter, *http.Request)(int, error)
 	errors map[int]func(http.ResponseWriter, *http.Request)
 	basePath string
 }
@@ -21,23 +21,30 @@ type Router struct {
 func New(basePath string) *Router {
 	rtr := Router{
 		basePath: basePath,
-		routes: make(map[string]map[string]func(http.ResponseWriter, *http.Request)int),
+		routes: make(map[string]map[string]func(http.ResponseWriter, *http.Request)(int, error)),
 		errors: make(map[int]func(http.ResponseWriter, *http.Request)),
 	}
 	return &rtr
 }
 
 // Add GET handler
-func (o *Router) GET(path string, handler func(http.ResponseWriter, *http.Request)int) {
+func (o *Router) GET(path string, handler func(http.ResponseWriter, *http.Request)(int, error)) {
 	if _, exists := o.routes[path]; !exists {
-		o.routes[path] = make(map[string]func(http.ResponseWriter, *http.Request)int)
+		o.routes[path] = make(map[string]func(http.ResponseWriter, *http.Request)(int, error))
 	}
 	o.routes[path]["GET"] = handler
 }
 
 // Add POST handler
-func (o *Router) POST(path string, handler func(http.ResponseWriter, *http.Request)int) {
+func (o *Router) POST(path string, handler func(http.ResponseWriter, *http.Request)(int, error)) {
+	if _, exists := o.routes[path]; !exists {
+		o.routes[path] = make(map[string]func(http.ResponseWriter, *http.Request)(int, error))
+	}
 	o.routes[path]["POST"] = handler
+}
+
+func (o *Router) Error(status int, handler func(http.ResponseWriter, *http.Request)) {
+	o.errors[status] = handler
 }
 
 // Start the server
@@ -49,7 +56,6 @@ func (o *Router) Start(addr string) {
 
 func (o *Router) sendError(w http.ResponseWriter, req *http.Request, status int) {
 	handler, exists := o.errors[status]
-	log.Println(req.Method, req.URL, req.RemoteAddr, status)
 	if exists {
 		handler(w, req)
 	} else {
@@ -64,15 +70,25 @@ func (o *Router) routeRequest(w http.ResponseWriter, req *http.Request) {
 	URL := req.URL
 	method := req.Method
 	remoteAddr := req.RemoteAddr
+	var status int
 
 	handler, exists := o.routes[req.URL.Path][req.Method]
 	if exists {
-		status := handler(w, req)
-		log.Println(method, URL, remoteAddr, status)
+		var err error
+		status, err = handler(w, req)
+		if err != nil {
+			log.Println(err)
+			o.sendError(w, req, status)
+		}
 	} else {
 		if _, exists := o.routes[req.URL.Path]; exists {
 			o.sendError(w, req, http.StatusMethodNotAllowed)
+			status = http.StatusMethodNotAllowed
+		} else{
+			o.sendError(w, req, http.StatusNotFound)
+			status = http.StatusNotFound
 		}
-		o.sendError(w, req, http.StatusNotFound)
 	}
+	
+	log.Println(method, URL, remoteAddr, status)
 }

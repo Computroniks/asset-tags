@@ -62,5 +62,8 @@ func main() {
 	app.POST("/api/tag", handler.IncrementTag)
 	app.GET("/api/prefix", handler.GetPrefixes)
 	app.POST("/api/prefix", handler.AddPrefix)
+	app.Error(400, handler.HTTP400)
+	app.Error(404, handler.HTTP404)
+	app.Error(500, handler.HTTP500)
 	app.Start(util.BindAddr)
 }

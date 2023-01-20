@@ -4,65 +4,52 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/Computroniks/asset-tags/util"
 )
 
-func GetTag(w http.ResponseWriter, req *http.Request) int {
+func GetTag(w http.ResponseWriter, req *http.Request) (int, error) {
 	prefix := req.URL.Query().Get("prefix")
 	if prefix == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("400"))
-		return http.StatusBadRequest
+		return http.StatusBadRequest, errors.New("400 bad request")
 	} else {
 		tag, err := util.DB.GetTag(prefix)
 
 		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("500"))
-			return http.StatusInternalServerError
+			return http.StatusInternalServerError, err
 		}
 
 		w.Header().Add("Content-type", "application/json")
 		w.Write([]byte(fmt.Sprintf("{\"tag\": \"%s\"}", tag)))
-		return http.StatusOK
+		return http.StatusOK, nil
 	}
 }
 
-func IncrementTag(w http.ResponseWriter, req *http.Request) int {
+func IncrementTag(w http.ResponseWriter, req *http.Request) (int, error) {
 	prefix := req.URL.Query().Get("prefix")
 	if prefix == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("400"))
-		return http.StatusBadRequest
+		return http.StatusBadRequest, errors.New("400 bad request")
 	} else {
 		err := util.DB.IncrementTag(prefix)
 
 		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("500"))
-			return http.StatusInternalServerError
+			return http.StatusInternalServerError, err
 		}
 
 		w.Header().Add("Content-type", "application/json")
 		w.Write([]byte("{\"status\": 200}"))
-		return http.StatusOK
+		return http.StatusOK, nil
 	}
 }
 
-func GetPrefixes(w http.ResponseWriter, req *http.Request) int {
+func GetPrefixes(w http.ResponseWriter, req *http.Request) (int, error) {
 	prefixes, err := util.DB.GetPrefixes()
 
 	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500"))
-		return http.StatusInternalServerError
+		return http.StatusInternalServerError, err
 	}
 
 	prefixJson := ""
@@ -73,27 +60,22 @@ func GetPrefixes(w http.ResponseWriter, req *http.Request) int {
 
 	w.Header().Add("Content-type", "application/json")
 	w.Write([]byte(fmt.Sprintf("{\"prefixes\":[%s]}", prefixJson)))
-	return http.StatusOK
+	return http.StatusOK, nil
 }
 
-func AddPrefix(w http.ResponseWriter, req *http.Request) int {
+func AddPrefix(w http.ResponseWriter, req *http.Request) (int, error) {
 	prefix := req.URL.Query().Get("prefix")
 	if prefix == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("400"))
-		return http.StatusBadRequest
+		return http.StatusBadRequest, errors.New("400 bad request")
 	} else {
 		err := util.DB.AddPrefix(prefix)
 
 		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("500"))
-			return http.StatusInternalServerError
+			return http.StatusInternalServerError, err
 		}
 
 		w.Header().Add("Content-type", "application/json")
 		w.Write([]byte("{\"status\": 200}"))
-		return http.StatusOK
+		return http.StatusOK, nil
 	}
 }

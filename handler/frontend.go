@@ -4,7 +4,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/Computroniks/asset-tags/templates"
@@ -17,21 +16,18 @@ type templateData struct {
 	CurrentPrefix string
 }
 
-func Index(w http.ResponseWriter, req *http.Request) int {
+func Index(w http.ResponseWriter, req *http.Request) (int, error) {
 	prefix := req.URL.Query().Get("prefix")
 
 	prefixes, err := util.DB.GetPrefixes()
 	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500"))
-		return http.StatusInternalServerError
+		return http.StatusInternalServerError, err
 	}
 
 	if prefix == "" {
 		if len(prefixes) == 0 {
 			http.Redirect(w, req, "/settings", http.StatusSeeOther)
-			return http.StatusSeeOther
+			return http.StatusSeeOther, nil
 		}
 		prefix = prefixes[0]
 	} 
@@ -40,12 +36,9 @@ func Index(w http.ResponseWriter, req *http.Request) int {
 	tag, err = util.DB.GetTag(prefix)
 
 	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500"))
-		return http.StatusInternalServerError
+		return http.StatusInternalServerError, err
 	}
-	
+
 	templates.Templates["index"].Execute(w, templateData{Current: tag, Prefixes: prefixes, CurrentPrefix: prefix})
-	return http.StatusOK
+	return http.StatusOK, nil
 }

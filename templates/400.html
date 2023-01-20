@@ -8,9 +8,9 @@ SPDX-License-Identifier: MIT
   <head>
     <meta
       name="viewport"
-      content="width=device-width, height=device-height, initial-scale=1.0"
+      content="width=device-width, height=device-height,initial-scale=1.0"
     />
-    <title>Generate Asset Tag</title>
+    <title>400 Bad request</title>
     <style>
       html {
         width: 100%;
@@ -92,55 +92,12 @@ SPDX-License-Identifier: MIT
       }
     </style>
   </head>
-
   <body>
     <article>
-      <h1>Generate asset tag</h1>
+      <h1>400 Bad request</h1>
       <div>
-        <label for="prefix-select">Using prefix:</label>
-        <select onchange="selectPrefix()" id="prefix-select">
-          {{range .Prefixes}} {{if eq $.CurrentPrefix .}}
-          <option value="{{.}}" selected="selected">{{.}}</option>
-          {{else}}
-          <option value="{{.}}">{{.}}</option>
-          {{end}} {{end}}
-        </select>
-        <p>The next free asset tag is: <strong>{{.Current}}</strong></p>
-        <button onclick="take()">Assign</button>
+        <p>Your browser sent us a bad request that we could not intepret.</p>
       </div>
     </article>
-
-    <script>
-      function getCurrentPrefix() {
-        let params = new URL(document.location).searchParams;
-        let prefix = params.get("prefix");
-        if (prefix === undefined || prefix === null) {
-          return fetch("/api/prefix")
-            .then((res) => res.json())
-            .then((data) => {
-              return data.prefixes[0];
-            });
-        } else {
-          return new Promise((res) => {
-            res(prefix);
-          });
-        }
-      }
-
-      function selectPrefix() {
-        let select = document.getElementById("prefix-select").value;
-        location.href = `/?prefix=${select}`;
-      }
-
-      function take() {
-        getCurrentPrefix().then((prefix) => {
-          fetch(`/api/tag?prefix=${getCurrentPrefix()}`, {
-            method: "POST",
-          }).then(() => {
-            location.reload();
-          });
-        });
-      }
-    </script>
   </body>
 </html>
