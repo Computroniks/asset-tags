@@ -22,7 +22,8 @@ SPDX-License-Identifier: MIT
                 flex-flow: row wrap;
                 justify-content: space-around;
                 align-items: center;
-                font: 20px Helvetica, sans-serif;
+                font-family: var(--font);
+                font-size: 20px;
                 overflow: hidden;
             }
             h1 {
@@ -69,11 +70,19 @@ SPDX-License-Identifier: MIT
                 color: #444;
                 font-size: 14px;
             }
+            select {
+                background: var(--bg-color);
+                color: var(--text-color);
+                border: 0px solid transparent;
+                text-decoration: none;
+                font: inherit
+            }
             :root {
-                --primary: #dc8100;
-                --accent: #333;
+                --primary: #1685fc;
+                --secondary: #6c757d;
                 --text-color: #000;
                 --bg-color: #fff;
+                --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
             }
         </style>
     </head>
@@ -82,6 +91,16 @@ SPDX-License-Identifier: MIT
         <article>
             <h1>Generate asset tag</h1>
             <div>
+                <label for="prefix-select">Using prefix:</label>
+                <select onchange="selectPrefix()" id="prefix-select">
+                    {{range .Prefixes}}
+                        {{if eq $.CurrentPrefix .}}
+                            <option value="{{.}}" selected="selected">{{.}}</option>
+                        {{else}}
+                            <option value="{{.}}">{{.}}</option>
+                        {{end}}
+                    {{end}}
+                </select>
                 <p>The next free asset tag is: <strong>{{.Current}}</strong></p>
                 <button onclick="take()">Assign</button>
             </div>
@@ -98,6 +117,11 @@ SPDX-License-Identifier: MIT
                 }
 
                 return prefix
+            }
+
+            function selectPrefix() {
+                let select = document.getElementById("prefix-select").value
+                location.href = `/?prefix=${select}`
             }
 
             function take() {

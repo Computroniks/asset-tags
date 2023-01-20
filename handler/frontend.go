@@ -13,11 +13,14 @@ import (
 
 type templateData struct {
 	Current string
+	Prefixes []string
+	CurrentPrefix string
 }
 
 func Index(w http.ResponseWriter, req *http.Request) int {
 	prefix := req.URL.Query().Get("prefix")
 	var tag string
+	var prefixes []string
 	if prefix == "" {
 		// TODO: Get first tag
 	} else {
@@ -29,7 +32,15 @@ func Index(w http.ResponseWriter, req *http.Request) int {
 			w.Write([]byte("500"))
 			return http.StatusInternalServerError
 		}
+
+		prefixes, err = util.DB.GetPrefixes()
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("500"))
+			return http.StatusInternalServerError
+		}
 	}
-	templates.Templates["index"].Execute(w, templateData{Current: tag})
+	templates.Templates["index"].Execute(w, templateData{Current: tag, Prefixes: prefixes, CurrentPrefix: prefix})
 	return http.StatusOK
 }
