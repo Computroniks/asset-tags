@@ -1,11 +1,92 @@
+<!-- 
+SPDX-FileCopyrightText: 2023 Matthew Nickson <mnickson@sidingsmedia.com>
+SPDX-License-Identifier: MIT
+-->
+
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
         <title>Generate Asset Tag</title>
+        <style>
+            html {
+                width: 100%;
+                height: 100%;
+            }
+            body {
+                text-align: center;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-around;
+                align-items: center;
+                font: 20px Helvetica, sans-serif;
+                overflow: hidden;
+            }
+            h1 {
+                font-size: 50px;
+                margin-top: 0;
+            }
+            article {
+                display: block;
+                text-align: left;
+                width: 95%;
+                max-width:650px;
+                margin: 0 auto;
+            }
+            a {
+                color: var(--primary);
+                text-decoration: none;
+            }
+            a:hover {
+                color: var(--accent);
+                text-decoration: none;
+            }
+            button {
+                    cursor: pointer;
+                    outline: 0;
+                    display: inline-block;
+                    font-weight: 400;
+                    line-height: 1.5;
+                    text-align: center;
+                    background-color: transparent;
+                    border: 1px solid transparent;
+                    padding: 6px 12px;
+                    font-size: 1rem;
+                    border-radius: .25rem;
+                    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+                    color: var(--primary);
+                    border-color: var(--primary);
+            }
+            button:hover {
+                color: var(--bg-color);
+                background-color: var(--primary);
+                border-color: var(--primary);
+            }
+            footer {
+                color: #444;
+                font-size: 14px;
+            }
+            :root {
+                --primary: #dc8100;
+                --accent: #333;
+                --text-color: #000;
+                --bg-color: #fff;
+            }
+        </style>
     </head>
+
     <body>
-        <h4>The next free asset tag is: {{.Current}}</h4>
-        <button onclick="take()">Take</button>
+        <article>
+            <h1>Generate asset tag</h1>
+            <div>
+                <p>The next free asset tag is: <strong>{{.Current}}</strong></p>
+                <button onclick="take()">Assign</button>
+            </div>
+        </article>
+
         <script>
             function getCurrentPrefix() {
                 let params = (new URL(document.location)).searchParams
