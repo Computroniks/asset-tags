@@ -21,6 +21,7 @@ func init() {
 	util.DatabaseUsr = util.Mustgetenv(util.DatabaseUsrEnv)
 	util.DatabasePwd = util.Mustgetenv(util.DatabasePwdEnv)
 	util.DatabaseName = util.Mustgetenv(util.DatabaseNameEnv)
+	util.DatabaseTimeout = util.Getenv(util.DatabaseTimeoutEnv, util.DefaultDBTimeout)
 	util.BasePath = util.Getenv(util.BasePathEnv, util.DefaultBasePath)
 
 	var err error
@@ -48,6 +49,7 @@ func main() {
 		util.DatabaseUsr,
 		util.DatabasePwd,
 		util.DatabaseName,
+		util.DatabaseTimeout,
 	)
 
 	if err != nil {

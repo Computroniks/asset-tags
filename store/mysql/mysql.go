@@ -17,8 +17,8 @@ type MySQLDB struct {
 	dbPath string
 }
 
-func New(addr string, uname string, pwd string, dbname string) (*MySQLDB, error) {
-	connString := fmt.Sprintf("%s:%s@tcp(%s)/%s", uname, pwd, addr, dbname)
+func New(addr string, uname string, pwd string, dbname string, timeout string) (*MySQLDB, error) {
+	connString := fmt.Sprintf("%s:%s@tcp(%s)/%s?timeout=%ss", uname, pwd, addr, dbname, timeout)
 	conn, err := sql.Open("mysql", connString)
 	if err != nil {
 		return nil, err

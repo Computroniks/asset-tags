@@ -14,6 +14,7 @@ var (
 	DatabaseUsr string
 	DatabasePwd string
 	DatabaseName string
+	DatabaseTimeout string
 	TagLength int
 	BasePath string
 	DB store.Store
@@ -26,6 +27,7 @@ const (
 	DatabaseUsrEnv = "DB_USER"
 	DatabasePwdEnv = "DB_PASSWORD"
 	DatabaseNameEnv = "DB_NAME"
+	DatabaseTimeoutEnv = "DB_TIMEOUT"
 	TagLengthEnv = "TAG_LENGTH"
 	BasePathEnv = "BASE_PATH"
 )
@@ -35,4 +37,5 @@ const (
 	DefaultBindAddr = ":3000"
 	DefaultTagLength = 6
 	DefaultBasePath = "/"
+	DefaultDBTimeout = "5"
 )
