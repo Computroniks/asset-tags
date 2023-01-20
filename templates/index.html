@@ -54,6 +54,8 @@ SPDX-License-Identifier: MIT
         display: inline-block;
         font-weight: 400;
         line-height: 1.5;
+        width: 80px;
+        height: 40px;
         text-align: center;
         background-color: transparent;
         border: 1px solid transparent;
@@ -65,10 +67,14 @@ SPDX-License-Identifier: MIT
         color: var(--primary);
         border-color: var(--primary);
       }
-      button:hover {
+      button:hover,
+      .button-clicked {
         color: var(--bg-color);
         background-color: var(--primary);
         border-color: var(--primary);
+      }
+      .button-clicked {
+        padding: 0px;
       }
       footer {
         color: #444;
@@ -90,6 +96,63 @@ SPDX-License-Identifier: MIT
           Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji",
           "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
       }
+
+      /* Spinner from https://loading.io/css/ released under CC0-1.0*/
+      .lds-ellipsis {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .lds-ellipsis div {
+        position: absolute;
+        top: 15px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--bg-color);
+        animation-timing-function: cubic-bezier(0, 1, 1, 0);
+      }
+      .lds-ellipsis div:nth-child(1) {
+        left: 8px;
+        animation: lds-ellipsis1 0.6s infinite;
+      }
+      .lds-ellipsis div:nth-child(2) {
+        left: 8px;
+        animation: lds-ellipsis2 0.6s infinite;
+      }
+      .lds-ellipsis div:nth-child(3) {
+        left: 32px;
+        animation: lds-ellipsis2 0.6s infinite;
+      }
+      .lds-ellipsis div:nth-child(4) {
+        left: 56px;
+        animation: lds-ellipsis3 0.6s infinite;
+      }
+      @keyframes lds-ellipsis1 {
+        0% {
+          transform: scale(0);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes lds-ellipsis3 {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(0);
+        }
+      }
+      @keyframes lds-ellipsis2 {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(24px, 0);
+        }
+      }
     </style>
   </head>
 
@@ -106,7 +169,7 @@ SPDX-License-Identifier: MIT
           {{end}} {{end}}
         </select>
         <p>The next free asset tag is: <strong>{{.Current}}</strong></p>
-        <button onclick="take()">Assign</button>
+        <button onclick="take()" id="assign-btn">Assign</button>
       </div>
     </article>
 
@@ -133,6 +196,9 @@ SPDX-License-Identifier: MIT
       }
 
       function take() {
+        document.getElementById("assign-btn").innerHTML =
+          '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+        document.getElementById("assign-btn").classList = "button-clicked";
         getCurrentPrefix().then((prefix) => {
           fetch(`/api/tag?prefix=${prefix}`, {
             method: "POST",
