@@ -4,6 +4,7 @@
 package handler
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/Computroniks/asset-tags/templates"
@@ -20,6 +21,11 @@ func Index(w http.ResponseWriter, req *http.Request) (int, error) {
 	prefix := req.URL.Query().Get("prefix")
 
 	prefixes, err := util.DB.GetPrefixes()
+
+	if err == sql.ErrNoRows {
+		return http.StatusNotFound, err
+	}
+
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -34,6 +40,10 @@ func Index(w http.ResponseWriter, req *http.Request) (int, error) {
 
 	var tag string
 	tag, err = util.DB.GetTag(prefix)
+
+	if err == sql.ErrNoRows {
+		return http.StatusNotFound, err
+	}
 
 	if err != nil {
 		return http.StatusInternalServerError, err

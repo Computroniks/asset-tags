@@ -4,6 +4,7 @@
 package handler
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -17,6 +18,10 @@ func GetTag(w http.ResponseWriter, req *http.Request) (int, error) {
 		return http.StatusBadRequest, errors.New("400 bad request")
 	} else {
 		tag, err := util.DB.GetTag(prefix)
+
+		if err == sql.ErrNoRows {
+			return http.StatusNotFound, err
+		}
 
 		if err != nil {
 			return http.StatusInternalServerError, err
@@ -48,6 +53,10 @@ func IncrementTag(w http.ResponseWriter, req *http.Request) (int, error) {
 func GetPrefixes(w http.ResponseWriter, req *http.Request) (int, error) {
 	prefixes, err := util.DB.GetPrefixes()
 
+	if err == sql.ErrNoRows {
+		return http.StatusNotFound, err
+	}
+
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -56,7 +65,9 @@ func GetPrefixes(w http.ResponseWriter, req *http.Request) (int, error) {
 	for _, prefix := range prefixes {
 		prefixJson += "\"" + prefix + "\","
 	}
-	prefixJson = prefixJson[:len(prefixJson)-1]
+	if len(prefixJson) > 1 {
+		prefixJson = prefixJson[:len(prefixJson)-1]
+	}
 
 	w.Header().Add("Content-type", "application/json")
 	w.Write([]byte(fmt.Sprintf("{\"prefixes\":[%s]}", prefixJson)))
