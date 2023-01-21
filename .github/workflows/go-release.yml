@@ -29,10 +29,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: wangyoucao577/go-release-action@v1.16
+      - uses: wangyoucao577/go-release-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
+          goversion: "https://dl.google.com/go/go1.16.1.linux-amd64.tar.gz"
           binary_name: "asset-tags"
           ldflags: "-s -w"
