@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2023 Matthew Nickson <mnickson@sidingsmedia.com>
+# SPDX-License-Identifier: CC0-1.0
+
+name: Go
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  releases-matrix:
+    name: Release Go Binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # build and publish in parallel: linux/amd64
+        goos: [linux, freebsd, darwin]
+        goarch: [amd64, arm, arm64, 386]
+        exclude:
+          - goarch: 386
+            goos: darwin
+          - goarch: arm
+            goos: darwin
+          - goarch: arm64
+            goos: darwin
+        goarm:
+          - 7
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: wangyoucao577/go-release-action@v1.16
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          binary_name: "asset-tags"
+          ldflags: "-s -w"
