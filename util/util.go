@@ -42,3 +42,13 @@ func FormatTag(prefix string, count int) string {
 		return prefix + strings.Repeat("0", padding) + unique
 	}
 }
+
+// Linear search of array
+func SInArray(arr []string, search string) bool {
+    for _, x := range arr {
+        if x == search {
+            return true
+        }
+    }
+	return false
+}

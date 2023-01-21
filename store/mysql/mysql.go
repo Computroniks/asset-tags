@@ -5,12 +5,22 @@ package mysql
 
 import (
 	"database/sql"
+	_ "embed"
 	"fmt"
 	"log"
 
 	"github.com/Computroniks/asset-tags/util"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/qustavo/dotsql"
 )
+
+//go:embed schema.sql
+var schema string
+
+var patches = []string{
+	"create-patches",
+	"create-prefixes",
+}
 
 type MySQLDB struct {
 	conn *sql.DB
@@ -36,7 +46,68 @@ func New(addr string, uname string, pwd string, dbname string, timeout string) (
 		dbPath: dbname,
 	}
 
+	err = db.patch()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	return &db, nil
+}
+
+// Apply required patches to database
+func (o *MySQLDB) patch() error {
+	log.Println("Checking if database needs patching")
+	var count int
+	err := o.conn.QueryRow(
+		"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=? AND table_name='patches' LIMIT 1;",
+		util.DatabaseName,
+	).Scan(&count)
+	if err != nil {
+		return err
+	}
+	var appliedPatches []string
+	if count < 1 {
+		// New database. Need to set up everything
+		log.Println("Database has not been configured. Configuring now")
+	} else {
+		rows, err := o.conn.Query("SELECT name FROM patches;")
+
+		if err != nil {
+			return err
+		}
+
+		for rows.Next() {
+			var patch string
+			rows.Scan(&patch)
+			appliedPatches = append(appliedPatches, patch)
+		}
+	}
+
+	dot, err := dotsql.LoadFromString(schema)
+
+	if err != nil {
+		return err
+	}
+
+	for _, patch := range patches {
+		if util.SInArray(appliedPatches, patch) {
+			log.Printf("%s already applied. Skipping", patch)
+		} else {
+			log.Printf("Applying patch %s to database.", patch)
+			_, err := dot.Exec(o.conn, patch)
+			if err != nil {
+				return err
+			}
+
+			_, err = o.conn.Exec("INSERT INTO patches(name) VALUES(?);", patch)
+			if err != nil {
+				log.Printf("Failed to insert %s into patches table. Please insert manually.", patch)
+				return err
+			}
+		}
+	}
+	
+	return nil
 }
 
 func (o *MySQLDB) getCount(prefix string) (int, error) {
