@@ -12,10 +12,18 @@ import (
 	"github.com/Computroniks/asset-tags/store/mysql"
 	"github.com/Computroniks/asset-tags/templates"
 	"github.com/Computroniks/asset-tags/util"
+	"github.com/joho/godotenv"
 )
 
 func init() {
 	log.Println("Fetching environment variables")
+	var err error
+
+	err = godotenv.Load()
+	if err != nil {
+		log.Println("Failed to load .env file")
+	}
+
 	util.BindAddr = util.Getenv(util.BindAddrEnv, util.DefaultBindAddr)
 	util.DatabaseAddr = util.Mustgetenv(util.DatabaseAddrEnv)
 	util.DatabaseUsr = util.Mustgetenv(util.DatabaseUsrEnv)
@@ -24,7 +32,6 @@ func init() {
 	util.DatabaseTimeout = util.Getenv(util.DatabaseTimeoutEnv, util.DefaultDBTimeout)
 	util.BasePath = util.Getenv(util.BasePathEnv, util.DefaultBasePath)
 
-	var err error
 	util.TagLength, err = strconv.Atoi(
 		util.Getenv(
 			util.TagLengthEnv,
