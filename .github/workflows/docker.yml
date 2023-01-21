@@ -11,19 +11,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: release
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
     
     - name: Login to Docker
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      run: echo {{secrets.DOCKER_PASSWORD}} | docker login -u {{ $secrets.DOCKER_USER }} --password-stdin
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag asset-tags:${{github.ref_name}}
+      run: docker build . --file Dockerfile --tag asset-tags:latest
+
+    - name: Tag image
+      run: docker tag asset-tags:latest asset-tags:${{github.ref_name}}
       
     - name: Publish image
-      run: docker push ${{secrets.DOCKER_USER}}/asset-tags
+      run: docker push asset-tags:${{github.ref_name}}
